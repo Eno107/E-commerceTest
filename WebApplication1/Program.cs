@@ -1,9 +1,30 @@
+using Microsoft.EntityFrameworkCore;
+using WebApplication1.Data;
+
 var builder = WebApplication.CreateBuilder(args);
+
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
+//added
+builder.Services.AddDbContext<AppDBContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnectionString")));
+
 var app = builder.Build();
+
+//Seed database
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    var dbContext = services.GetRequiredService<AppDBContext>();
+
+    // Call the seed method
+    AppDbInitializer.Seed(app);
+
+    // Continue with other configurations and middleware
+    // ...
+
+}
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
