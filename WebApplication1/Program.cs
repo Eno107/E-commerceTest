@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using WebApplication1.Data;
+using WebApplication1.Data.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,16 +10,17 @@ builder.Services.AddControllersWithViews();
 
 //added
 builder.Services.AddDbContext<AppDBContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnectionString")));
+builder.Services.AddScoped<IActorsService, ActorService>();
 
 var app = builder.Build();
 
-//Seed database
+//added Seed database
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
     var dbContext = services.GetRequiredService<AppDBContext>();
-
-    // Call the seed method
+ 
+   // Call the seed method
     AppDbInitializer.Seed(app);
 
     // Continue with other configurations and middleware
